@@ -48,3 +48,15 @@ func TestMe (t *testing.T) {
 	Expec(t, []int{1,2,3,4,5}).To.Include(3)
 }
 ```
+
+## License
+
+Expec is available as open source under the terms of the [MIT License][license]
+
+(c) 2020, Dušan D. Majkić
+
+## Authors
+
+* Dušan D. Majkić
+
+[license]: http://opensource.org/licenses/MIT
