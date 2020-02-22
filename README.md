@@ -21,14 +21,14 @@ import (
 func TestMe (t *testing.T) {
 	variable := "Some string"
 
-  // Equality
+	// Equality
 	Expec(t, variable).To.Eql("Some string")
 	Expec(t, variable).NotTo.Eql("Some otherstring")
 
 	// Match regexp
 	Expec(t, variable).To.Match("string$")
 
-  // Nil testing
+	// Nil testing
 	Expec(t, variable).NotTo.BeNil()
 
 	// Errors
@@ -41,10 +41,10 @@ func TestMe (t *testing.T) {
 	Expec(t, err).To.RaiseErr("Something went wrong")
 	Expec(t, err).To.RaiseErr(os.ErrNotExist)
 
-  // Interfaces
+	// Interfaces
 	Expec(t, errors.new("error") ).To.BeA(error(nil))
 
-  // Slices
+	// Slices
 	Expec(t, []int{1,2,3,4,5}).To.Include(3)
 }
 ```

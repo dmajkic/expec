@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -37,6 +38,7 @@ func (c *Challenge) expect(condition bool, eformat string, args ...interface{}) 
 
 	if c.not {
 		condition = !condition
+		eformat = strings.ReplaceAll(eformat, "to be", "not to be")
 	}
 
 	if !condition {
@@ -70,7 +72,11 @@ func (c *Challenge) Be(expected interface{}) *Challenge {
 func (c *Challenge) BeNil() *Challenge {
 	c.t.Helper()
 	v := reflect.ValueOf(c.v)
-	c.expect(c.v == nil || v.IsZero() || v.IsNil(), "Expected '%v' to be nil", c.v)
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map,
+		reflect.Ptr, reflect.Slice, reflect.UnsafePointer:
+		c.expect(c.v == nil || v.IsNil(), "Expected '%v' to be nil", c.v)
+	}
 	return c
 }
 
@@ -146,7 +152,20 @@ func (c *Challenge) BeAn(intf interface{}) *Challenge {
 // Implement is an alias for BeA
 func (c *Challenge) Implement(intf interface{}) *Challenge {
 	c.t.Helper()
-	c.BeA(intf)
+
+	if c.v == nil {
+		c.expect(false, "Value is nil. It does not implement %v", reflect.TypeOf(c.v))
+		return c
+	}
+
+	t := reflect.TypeOf(c.v)
+
+	intft := reflect.TypeOf(intf)
+	if intft.Elem().Kind() != reflect.Interface {
+		c.expect(false, "Expected '%v' to be pointer to interface like (*error)(nil)", intft)
+		return c
+	}
+	c.expect(t == intft || (t.Implements(intft.Elem())), "Expected '%v' to be implementator of %v", t, intf)
 	return c
 }
 
@@ -201,29 +220,29 @@ func (c *Challenge) RaiseError(arguments ...interface{}) *Challenge {
 
 func getSlice(v interface{}) (reflect.Value, error)  {
 	a := reflect.ValueOf(v)
-	if a.Kind() != reflect.Slice || a.Kind() != reflect.Array || a.Kind() != reflect.String  {
+	if a.Kind() != reflect.Slice && a.Kind() != reflect.Array && a.Kind() != reflect.String  {
 		return a, fmt.Errorf("array, string or slice expected, got %v", a.Type().Kind())
 	}
 	return a, nil
 }
 
-// Include checks that expected is included in array
-func (c *Challenge) Include(expected interface{}) *Challenge {
+// Include checks that expected element is in array
+func (c *Challenge) Include(element interface{}) *Challenge {
 	c.t.Helper()
 
-	a, err := getSlice(expected)
+	a, err := getSlice(c.v)
 	if err != nil {
 		c.t.Error(err)
 		return c
 	}
 
 	for i := 0; i < a.Len(); i++ {
-		if reflect.DeepEqual(a.Index(i), expected) {
+		if reflect.DeepEqual(a.Index(i).Interface(), element) {
 			return c
 		}
 	}
 
-	c.t.Errorf("item %v is not incluuded in %v", expected, c.v)
+	c.t.Errorf("item %v is not incluuded in %v", element, c.v)
 	return c
 }
 
