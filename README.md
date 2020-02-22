@@ -23,7 +23,7 @@ func TestMe (t *testing.T) {
 
 	// Equality
 	Expec(t, variable).To.Eql("Some string")
-	Expec(t, variable).NotTo.Eql("Some otherstring")
+	Expec(t, variable).NotTo.Eql("Some other string")
 
 	// Match regexp
 	Expec(t, variable).To.Match("string$")
@@ -36,13 +36,13 @@ func TestMe (t *testing.T) {
 	Expec(t, err).To.BeNil()
 
 	// Errors expected
-	Expec(t, err).NoTo.BeNil()
+	Expec(t, err).NotTo.BeNil()
 	Expec(t, err).To.RaiseErr()
 	Expec(t, err).To.RaiseErr("Something went wrong")
 	Expec(t, err).To.RaiseErr(os.ErrNotExist)
 
 	// Interfaces
-	Expec(t, errors.new("error")).To.BeA((*error)(nil))
+	Expec(t, errors.new("error")).To.Implement((*error)(nil))
 
 	// Slices
 	Expec(t, []int{1,2,3,4,5}).To.Include(3)
