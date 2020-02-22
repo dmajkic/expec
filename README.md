@@ -3,7 +3,7 @@ Expectations testing package for Go
 
 ## Usage
 
-Import it directly into test. Only exported function is `Expec()`
+Import expec package directly into test. Only exported function is `Expec()`
 
 ## Docs
 
@@ -42,7 +42,7 @@ func TestMe (t *testing.T) {
 	Expec(t, err).To.RaiseErr(os.ErrNotExist)
 
 	// Interfaces
-	Expec(t, errors.new("error") ).To.BeA(error(nil))
+	Expec(t, errors.new("error")).To.BeA((*error)(nil))
 
 	// Slices
 	Expec(t, []int{1,2,3,4,5}).To.Include(3)
