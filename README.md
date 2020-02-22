@@ -18,7 +18,7 @@ import (
 	_ "github.com/dmajkic/expec"
 )
 
-func TestMe (t *testing.T) {
+func TestMe(t *testing.T) {
 	variable := "Some string"
 
 	// Equality
@@ -46,6 +46,10 @@ func TestMe (t *testing.T) {
 
 	// Slices
 	Expec(t, []int{1,2,3,4,5}).To.Include(3)
+
+	// Chaining And
+	v := 1
+	Expec(t, v).To.Eq(1).And.NotTo.Eq(3)
 }
 ```
 

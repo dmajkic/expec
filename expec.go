@@ -10,7 +10,7 @@ import (
 )
 
 type Challenge struct {
-	Subject
+	*Subject
 	not bool
 }
 
@@ -25,9 +25,9 @@ type Subject struct {
 func Expec(t *testing.T, v interface{}) *Subject {
 	t.Helper()
 	ret := &Subject{t:t, v:v}
-	ret.To = &Challenge{*ret, false}
-	ret.And = &Challenge{*ret, false}
-	ret.NotTo = &Challenge{*ret, true}
+	ret.To = &Challenge{ret, false}
+	ret.And = &Challenge{ret, false}
+	ret.NotTo = &Challenge{ret, true}
 
 	return ret
 }

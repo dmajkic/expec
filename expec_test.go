@@ -174,3 +174,8 @@ func TestChallenge_RaiseError(t *testing.T) {
 
 	Expec(t, err).NotTo.BeNil()
 }
+
+func TestChainAnd(t *testing.T) {
+	v := 1
+	Expec(t, v).To.Eq(1).And.NotTo.Eq(3)
+}
