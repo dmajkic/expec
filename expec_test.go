@@ -142,6 +142,9 @@ func TestChallenge_Eql(t *testing.T) {
 
 	Expec(t, s{1,2,&tre}).To.Eql(sv)
 	Expec(t, s{1,2,&vtr}).NotTo.Eql([]int{1,2,3})
+
+	Expec(t, []int{1,2,3}).To.Eql([]int{1,2,3})
+	Expec(t, []int{1,2,3}).NotTo.Eql([]int{3,2,1})
 }
 
 func TestChallenge_Implement(t *testing.T) {
@@ -149,12 +152,6 @@ func TestChallenge_Implement(t *testing.T) {
 
 	var e error
 	Expec(t, e).NotTo.Implement((*error)(nil))
-}
-
-func TestChallenge_Include(t *testing.T) {
-	Expec(t, []int{1,2,3,4}).To.Include(2)
-	Expec(t, []string{"1","2","3","4"}).To.Include("4")
-	Expec(t, []interface{}{"1",2,3.33,"4"}).To.Include(3.33)
 }
 
 func TestChallenge_Match(t *testing.T) {
@@ -168,11 +165,38 @@ func TestChallenge_RaiseError(t *testing.T) {
 	err := errors.New("error raised")
 	Expec(t, err).To.RaiseError()
 	Expec(t, err).To.RaiseError("error raised")
+	Expec(t, err).To.Be("error raised")
 
 	err2 := os.ErrClosed
 	Expec(t, err2).To.RaiseError(os.ErrClosed)
+	Expec(t, err2).To.Be(os.ErrClosed)
 
 	Expec(t, err).NotTo.BeNil()
+}
+
+func TestChallenge_Include(t *testing.T) {
+	Expec(t, []int{1,2,3,4}).To.Include(2)
+	Expec(t, []string{"1","2","3","4"}).To.Include("4")
+	Expec(t, []interface{}{"1",2,3.33,"4"}).To.Include(3.33)
+	Expec(t, "1234").To.Include("4")
+}
+
+func TestChallenge_StartWith(t *testing.T) {
+	Expec(t, []int{1,2,3,4,5}).To.StartWith(1,2)
+	Expec(t, "12345").To.StartWith("12")
+	Expec(t, "12345").To.StartWith("1", "2")
+}
+
+func TestChallenge_EndWith(t *testing.T) {
+	Expec(t, []int{1,2,3,4,5}).To.EndWith(3,4,5)
+	Expec(t, "12345").To.EndWith("45")
+	Expec(t, "12345").To.EndWith("4", "5")
+}
+
+func TestChallenge_ContainExactly(t *testing.T) {
+	Expec(t, []int{1,2,3,4,5}).To.ContainExactly(1,2,3,4,5)
+	Expec(t, "12345").To.ContainExactly("12345")
+	Expec(t, "12345").To.ContainExactly("1","2","3","4","5")
 }
 
 func TestChainAnd(t *testing.T) {
